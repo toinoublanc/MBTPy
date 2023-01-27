@@ -1,0 +1,93 @@
+python
+numpy
+pandas
+scikit-learn
+tensorflow
+jupyter
+transformers
+matplotlib
+seaborn
+plotly
+bs4
+regex
+scipy
+joblib # "allready installed"
+sqlalchemy
+requests
+pydandic
+nltk
+xgboost
+wordcloud  #conda install -c conda-forge wordcloud
+fastapi #conda install -c conda-forge fastapi
+catboost  #conda install -c conda-forge catboost
+imbalanced-learn #conda install -c conda-forge imbalanced-learn
+imageio # conda install -c conda-forge imageio
+textblob # conda install -c conda-forge textblob
+
+###############################################################################
+# "The following packages are not available for current channels"
+
+# fastapi
+# asyncio
+# time
+# datetime
+
+
+###############################################################################
+# Version incompatible
+
+# mysqlclient # max python <3.8
+
+
+
+
+###############################################################################
+# EN ATTENTE
+
+# pickle
+# json
+
+
+# wordcloud
+
+# os
+# string
+
+# pprint
+
+
+# mlflow
+# mlflow[extras] # also install most frequent mlflow dependancies
+
+# docker
+
+
+# uvicorn
+# passlib
+
+
+# enum
+# typing
+# csv
+# random
+
+
+
+# functools
+# itertools
+# warnings
+# sys
+# threading
+# multiprocessing
+
+# passlib
+# airflow
+
+
+# flask
+# flask_jwt_extended
+# flask_httpauth
+# werkzeug
+
+# wikipedia
+# Ipython
