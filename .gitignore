@@ -1,8 +1,9 @@
 __pycache__/
 .vscode/*
 
+# User defined
 draft_*
-
+local_*
 
 
 # Byte-compiled / optimized / DLL files

@@ -27,6 +27,10 @@ pytest
 git # conda install -c conda-forge git
 mypy # conda install -c conda-forge mypy
 mlflow # conda install -c conda-forge mlflow
+curl # conda install -c conda-forge curl
+passlib # conda install -c conda-forge passlib
+uvicorn # conda install -c conda-forge uvicorn
+airflow # conda install -c conda-forge airflow
 
 
 ###############################################################################
@@ -52,30 +56,19 @@ mlflow # conda install -c conda-forge mlflow
 # pickle
 # json
 
-
-# wordcloud
-
 # os
 # string
 
 # pprint
 
-
-# mlflow
 # mlflow[extras] # also install most frequent mlflow dependancies
 
-# docker
-
-
-# uvicorn
-# passlib
 
 
 # enum
 # typing
 # csv
 # random
-
 
 
 # functools
@@ -85,7 +78,6 @@ mlflow # conda install -c conda-forge mlflow
 # threading
 # multiprocessing
 
-# passlib
 # airflow
 
 
