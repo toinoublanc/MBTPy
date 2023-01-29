@@ -23,11 +23,16 @@ catboost  #conda install -c conda-forge catboost
 imbalanced-learn #conda install -c conda-forge imbalanced-learn
 imageio # conda install -c conda-forge imageio
 textblob # conda install -c conda-forge textblob
+pytest
+git # conda install -c conda-forge git
+
+
+
 
 ###############################################################################
 # "The following packages are not available for current channels"
 
-# fastapi
+
 # asyncio
 # time
 # datetime
