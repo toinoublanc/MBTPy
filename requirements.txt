@@ -23,11 +23,20 @@ catboost  #conda install -c conda-forge catboost
 imbalanced-learn #conda install -c conda-forge imbalanced-learn
 imageio # conda install -c conda-forge imageio
 textblob # conda install -c conda-forge textblob
+pytest
+git # conda install -c conda-forge git
+mypy # conda install -c conda-forge mypy
+mlflow # conda install -c conda-forge mlflow
+curl # conda install -c conda-forge curl
+passlib # conda install -c conda-forge passlib
+uvicorn # conda install -c conda-forge uvicorn
+airflow # conda install -c conda-forge airflow
+
 
 ###############################################################################
 # "The following packages are not available for current channels"
 
-# fastapi
+
 # asyncio
 # time
 # datetime
@@ -47,30 +56,19 @@ textblob # conda install -c conda-forge textblob
 # pickle
 # json
 
-
-# wordcloud
-
 # os
 # string
 
 # pprint
 
-
-# mlflow
 # mlflow[extras] # also install most frequent mlflow dependancies
 
-# docker
-
-
-# uvicorn
-# passlib
 
 
 # enum
 # typing
 # csv
 # random
-
 
 
 # functools
@@ -80,7 +78,6 @@ textblob # conda install -c conda-forge textblob
 # threading
 # multiprocessing
 
-# passlib
 # airflow
 
 
