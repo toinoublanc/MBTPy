@@ -25,8 +25,8 @@ imageio # conda install -c conda-forge imageio
 textblob # conda install -c conda-forge textblob
 pytest
 git # conda install -c conda-forge git
-
-
+mypy # conda install -c conda-forge mypy
+mlflow # conda install -c conda-forge mlflow
 
 
 ###############################################################################
