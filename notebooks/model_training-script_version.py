@@ -82,7 +82,6 @@ print(train_data.shape, test_data.shape)
 
 
 ###############################################################################
-# Building a preprocessing pipeline for text
 
 def clean_text(text):
     cleaned_text=[]
@@ -94,8 +93,15 @@ def clean_text(text):
     return cleaned_text
 
 
+# def lemmatize_text(text):
+#     lemmatizer = WordNetLemmatizer()
+#     return [lemmatizer.lemmatize(word) for word in text.split() if len(word)>2]
+
+# Building a preprocessing pipeline for text
+
 preprocessing_pipeline = Pipeline([
-    ('clean_text', FunctionTransformer(clean_text, validate=False)),
+    # ('clean_text', FunctionTransformer(clean_text, validate=False)),
+    # ('lemmatize', FunctionTransformer(lemmatize_text, validate=False)),
     ('vectorizer', TfidfVectorizer(max_features=5000, stop_words='english')),
 ])
 
