@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mbtpy-deployment
+  labels:
+    app: mbtpy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mbtpy
+  template:
+    metadata:
+      labels:
+        app: mbtpy
+    spec:
+      containers:
+      - name: mbtpy-mysql
+        image: toinoublanc/mbtpy-mysql:latest
+      - name: mbtpy-api
+        image: toinoublanc/mbtpy-api:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: ENVIRONMENT_TYPE
+          valueFrom:
+            secretKeyRef:
+              name: mbtpy-secret
+              key: password
