@@ -40,14 +40,14 @@ MBTPy
 
 ## Instructions to launch the API :
 
-#### Lanch without container
+### Launch without container
 
 1. fork this repo or download the code and unzip all files in a same directory.
 2. Go in the `/api/` directory and make sure the environment matches packages and versions listed in `requirements.txt` (run `pip install -r requirements.txt` if needed).
 3. Run `uvicorn main:app --reload`.
 4. The API will be serving at http://localhost:8000
 
-#### Launch in a Docker container
+### Launch in a Docker container
 
 1. Make sure you have `Docker` installed.
 2. Pull the image from DockerHub :
@@ -67,7 +67,7 @@ docker run toinoublanc/mbtpy-api:latest -p 8000:8000
 
 4. The API will be serving at http://localhost:8000
 
-#### Deploy on a Kubernetes cluster (3 pods)
+### Deploy on a Kubernetes cluster (3 pods)
 
 1. Make sure you have `Kubernetes`, `minikube` and `kubectl` installed.
 2. Run the following commands to launch a minikube cluster
@@ -126,7 +126,7 @@ minikube stop
 
 
 
-#### Routers
+## Routers
 
 Routers related to user management
 
