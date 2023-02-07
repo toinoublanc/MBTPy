@@ -1,9 +1,0 @@
-Models,Test accuracy
-logistic regression,0.6282420749279539
-Linear Support Vector classifier,0.661671469740634
-Support Vector classifier,0.6495677233429394
-Multinomial Naive Bayes,0.37809798270893374
-Decision Tree classifier,0.5146974063400577
-Random Forest Classifier,0.4559077809798271
-XGBoost Classifier,0.6587896253602306
-CatBoost Classifier,0.6720461095100865
