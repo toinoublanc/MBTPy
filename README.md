@@ -36,23 +36,6 @@ MBTPy
     └───models
 ```
 
-
-
-## Structure
-
-```bash
-MBTPy
-├───api
-│   ├───database
-│   ├───processing
-│   └───saved_models
-├───data
-│   └───raw
-├───kubernetes
-└───notebooks
-    └───models
-```
-
 ## Instructions to launch the API :
 
 ### Launch without container
