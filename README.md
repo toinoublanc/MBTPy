@@ -7,6 +7,23 @@ API build with FastAPI.
 - Input : Text.
 - Output : 4-letters 'MBTI' type prediction.
 
+
+
+## Structure
+
+```bash
+MBTPy
+├───api
+│   ├───database
+│   ├───processing
+│   └───saved_models
+├───data
+│   └───raw
+├───kubernetes
+└───notebooks
+    └───models
+```
+
 ## Instructions to launch the API :
 
 #### Lanch without container
