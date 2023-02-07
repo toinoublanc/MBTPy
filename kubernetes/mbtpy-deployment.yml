@@ -15,15 +15,8 @@ spec:
         app: mbtpy
     spec:
       containers:
-      - name: mbtpy-mysql
-        image: toinoublanc/mbtpy-mysql:latest
       - name: mbtpy-api
         image: toinoublanc/mbtpy-api:latest
         ports:
         - containerPort: 8000
-        env:
-        - name: ENVIRONMENT_TYPE
-          valueFrom:
-            secretKeyRef:
-              name: mbtpy-secret
-              key: password
+
