@@ -21,7 +21,6 @@ Based on their answers, individuals are assigned a four-letter personality type,
 
 It's important to note that the MBTI test is not a scientifically validated test and it has been criticized for lack of empirical evidence and reliability, but it is still widely used as a tool for personal development, self-awareness and, in the present case, training and deploying a machine learning model.
 
-
 ## Repository structure
 
 ```bash
@@ -36,7 +35,6 @@ MBTPy
 └───notebooks
     └───models
 ```
-
 
 ## Instructions to launch the API :
 
@@ -124,11 +122,9 @@ Do not forget to stop the cluster when you're done:
 minikube stop
 ```
 
-
-
 ## Routers
 
-Routers related to user management
+### Routers related to user management
 
 - GET  `/users/` : Read all users in the database.
 - POST  `/users/` : Create a new user in the database.
@@ -136,19 +132,15 @@ Routers related to user management
 - DELETE `/users/{user_id}` : Delete a specific user in the database.
 - PATCH `/users/{user_id}` : Update a specific user in the database.
 
-
-
-Routers related to prediction
+### Routers related to prediction
 
 - POST  `/predict/` : Create a new user in the database.
 - GET `/predict/` : Read a specific user in the database.
 
-
-Routers related to API testing
+### Routers related to API testing
 
 - POST  `/test/home` : Basic test endpoint to check if requests are functional.
 - GET `/test/demo` : Fille the `user` table of the `database` with 4 users (1 'admin' and 3 'standard').
 - GET `/test/coffee` : Purposely triggers error 418.
-
 
 That's all folks !
