@@ -51,7 +51,7 @@ MBTPy
 2. Pull the image from DockerHub :
 
 ```bash
-docker pull toinoublanc/mbtpy-api:latest
+docker pull toinoublanc/mbtpy-api:1.1.0
 ```
 
 > Alternatively, if you want to build the image locally, go in the `/api/` directory and run
@@ -60,7 +60,7 @@ docker pull toinoublanc/mbtpy-api:latest
 3. Run the following commands
 
 ```bash
-docker run toinoublanc/mbtpy-api:latest -p 8000:8000 
+docker run toinoublanc/mbtpy-api:1.1.0 -p 8000:8000 
 ```
 
 4. The API will be serving at http://localhost:8000
@@ -126,21 +126,24 @@ minikube stop
 
 ### Routers related to user management
 
-- GET  `/users/` : Read all users in the database.
-- POST  `/users/` : Create a new user in the database.
-- GET `/users/{user_id}` : Read a specific user in the database.
-- DELETE `/users/{user_id}` : Delete a specific user in the database.
-- PATCH `/users/{user_id}` : Update a specific user in the database.
+- GET  `/user/all` : Read all users from the table `user` of the database.
+- POST  `/user/new` : Create a new user in the table `user` of the database.
+- GET `/user/{user_id}` : Read a specific user from the table `user` of the database.
+- DELETE `/user/{user_id}` : Delete a specific user from the table `user` of the database.
+- PATCH `/user/{user_id}` : Update a specific user from the table `user` of the database.
 
 ### Routers related to prediction
 
-- POST  `/predict/` : Create a new user in the database.
-- GET `/predict/` : Read a specific user in the database.
+- GET `/prediction/all` : Read all previous predictions stored in the table `prediction` of the database.
+- POST  `/prediction/type` : Predict the 4-letters personnality type from a sample of text and store it in the table `prediction` of the database. Requires an API key (default value : `'apikey1234'`).
 
 ### Routers related to API testing
 
-- POST  `/test/home` : Basic test endpoint to check if requests are functional.
-- GET `/test/demo` : Fille the `user` table of the `database` with 4 users (1 'admin' and 3 'standard').
-- GET `/test/coffee` : Purposely triggers error 418.
+- GET `/home` : Basic endpoint.
+- GET `/auth` : Says Hello to authentified users only.
+- GET `/auth/admin` : Says Hello to admin users only.
+- GET `/key` : Check API Key validity.
+- POST `/user/demo` : Fill the `user` table of the database with 4 demo users (1 'admin' and 3 'standard'. Credentials of the 'admin' demo user are :  `'username' = 'Neo'` and `'password' = 'admin'`).
+- GET `/test/coffee` : Purposely triggers error 418 to check if API is functional.
 
 That's all folks !
