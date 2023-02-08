@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mbtpy-api
-        image: toinoublanc/mbtpy-api:latest
+        image: toinoublanc/mbtpy-api:1.1.0
         ports:
         - containerPort: 8000
 

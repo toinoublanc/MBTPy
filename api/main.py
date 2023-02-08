@@ -1,6 +1,7 @@
 ##############################################################################
 # Import packages & libraries
-from fastapi import FastAPI, Query, Header, Request, HTTPException, Depends, status
+from fastapi import FastAPI, Query, Header, Request, HTTPException, Security, Depends, status
+from fastapi.security.api_key import APIKeyHeader, APIKey
 from typing import List, Optional, Union
 from sqlmodel import Field, Relationship, Session, SQLModel, create_engine, select
 from fastapi.responses import JSONResponse
@@ -117,12 +118,47 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
         if not user or not pwd_context.verify(credentials.password, user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password",
+                detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Basic"},
             )
     return username
 
 
+
+def get_role_admin(*, 
+    session: Session = Depends(get_session),
+    credentials: HTTPBasicCredentials = Depends(security), 
+    role: Role,
+    ):
+    username = credentials.username
+    user = session.query(User).filter_by(username=username).first()
+    role = user.role
+
+    if not role == "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="admin rights required",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return role
+
+
+
+
+#------------------------------------------------------------------------------
+
+# API_KEY = os.environ.get("API_KEY")
+API_KEY = "apikey1234"
+API_KEY_NAME = "access_token"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header == API_KEY:
+        return api_key_header
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Could not validate api key"
+    )
 
 
 ##############################################################################
@@ -130,8 +166,8 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
 
 app = FastAPI(
     title="MBTPy",
-    description="API created for MLOps Project",
-    version="1.0.0",
+    description="'MBTI' Personnality-Type Indicator prediction API",
+    version="1.1.0",
     openapi_tags=[
         {'name': 'user', 'description': 'routers related to user management'},
         {'name': 'prediction', 'description': 'routers related to predictions'},
@@ -176,29 +212,69 @@ def MyExceptionHandler(
 #------------------------------------------------------------------------------
 # User management
 
-@app.post("/users/", tags=['user'])
-def create_user(*, session: Session = Depends(get_session), user: User):
+@app.get("/user/all", tags=['user'])
+def read_users(*, 
+    session: Session = Depends(get_session),
+    role: Role = Depends(get_role_admin),
+    offset: int = 0, 
+    limit: int = Query(default=100, lte=100),
+    ):
+    '''Read all users from the table `user` of the database.
+    '''
+    users = session.exec(select(User).offset(offset).limit(limit)).all()
+    return users
+
+@app.post("/user/new", tags=['user'])
+def create_user(*, 
+    session: Session = Depends(get_session),
+    role: Role = Depends(get_role_admin), 
+    user: User,
+    ):
+    '''Create a new user in the table `user` of the database.
+    '''
     new_user = User.from_orm(user)
     session.add(new_user)
     session.commit()
     session.refresh(new_user)
     return new_user
 
-@app.get("/users/", tags=['user'])
-def read_users(*, session: Session = Depends(get_session),
-    offset: int = 0, limit: int = Query(default=100, lte=100),):
-    users = session.exec(select(User).offset(offset).limit(limit)).all()
-    return users
-
-@app.get("/users/{user_id}", tags=['user'])
-def read_user(*, session: Session = Depends(get_session), user_id: int):
+@app.get("/user/{user_id}", tags=['user'])
+def read_user(*, 
+    session: Session = Depends(get_session),
+    role: Role = Depends(get_role_admin), 
+    user_id: int,
+    ):
+    '''Read a specific user from the table `user` of the database.
+    '''
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@app.patch("/users/{user_id}", tags=['user'])
-def update_user(*, session: Session = Depends(get_session), user_id: int, user: User):
+@app.delete("/user/{user_id}", tags=['user'])
+def delete_user(*, 
+    session: Session = Depends(get_session), 
+    role: Role = Depends(get_role_admin),
+    user_id: int,
+    ):
+    '''Delete a specific user from the table `user` of the database.
+    '''
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    session.delete(user)
+    session.commit()
+    return {"ok": True}
+
+@app.patch("/user/{user_id}", tags=['user'])
+def update_user(*, 
+    session: Session = Depends(get_session), 
+    role: Role = Depends(get_role_admin),
+    user_id: int, 
+    user: User,
+    ):
+    '''Update a specific user from the table `user` of the database.
+    '''
     db_user = session.get(User, user_id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -211,20 +287,30 @@ def update_user(*, session: Session = Depends(get_session), user_id: int, user: 
     return db_user
 
 
-@app.delete("/users/{user_id}", tags=['user'])
-def delete_user(*, session: Session = Depends(get_session), user_id: int):
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    session.delete(user)
-    session.commit()
-    return {"ok": True}
-
 #------------------------------------------------------------------------------
-# Predictions
+# MBTI Prediction
 
-@app.post("/predict", tags=['prediction'])
-def predict_type(*, session: Session = Depends(get_session), text: str):
+@app.get("/prediction/all", tags=['prediction'])
+def read_predictions(*, 
+    session: Session = Depends(get_session), 
+    username: str = Depends(get_current_user),
+    offset: int = 0, 
+    limit: int = Query(default=100, lte=100),
+    ):
+    '''Read all previous predictions stored in the table `prediction` of the database.
+    '''
+    predictions = session.exec(select(Prediction).offset(offset).limit(limit)).all()
+    return predictions
+
+
+@app.post("/prediction/type", tags=['prediction'])
+def predict_type(*, 
+    session: Session = Depends(get_session), 
+    text: str, 
+    api_key_header: APIKey = Depends(get_api_key)
+    ):
+    '''Predict the 4-letters personnality type from a sample of text and store it in the table `prediction` of the database.
+    '''
     text_data = [text]
     cleaned_text = clean_text(text_data)
     preprocessed_text = preprocessing_pipeline.transform(cleaned_text)
@@ -242,63 +328,94 @@ def predict_type(*, session: Session = Depends(get_session), text: str):
     return {"predicted_type": predicted_type}
 
 
-@app.get("/predict/", tags=['prediction'])
-def read_predictions(*, session: Session = Depends(get_session), 
-    offset: int = 0, limit: int = Query(default=100, lte=100),):
-    predictions = session.exec(select(Prediction).offset(offset).limit(limit)).all()
-    return predictions
-
 
 #------------------------------------------------------------------------------
 # Test
 
-@app.get("/test/", tags=['test'])
-def home():
+@app.get("/home", tags=['test'])
+def home(
+    ):
+    '''Basic endpoint.
+    '''
     return {"message": "Hello ! "}
 
 
-@app.post("/test/demo", tags=['test'])
-def create_demo_users(*, session: Session = Depends(get_session)):
-        demo_user_1 = User(
-            username = "Neo", 
-            password_hash = "$2b$12$iOZQSHDfAUUE73PKFMzpEOkxyqgeKcAGtPFWQXk04fVMFarYBL1aC",
-            role = "admin",
-            first_name = "Thomas",
-            last_name = "Anderson",
-        )
-        demo_user_2 = User(
-            username = "Arnold", 
-            password_hash = "$2b$12$OS3rgLnyPieDX0bcbbO1vOwJfz0TMotbSDPR3IfoCIcxzfrZm/h4S",
-            role = "standard",
-            first_name = "T1000",
-            last_name = "Governator",
-        )
-        demo_user_3 = User(
-            username = "Sarah", 
-            password_hash = "$2b$12$lZVgsZANfnA78cyN0PaAxeMWCJtXcNK8sCQ.O1OLtSzI35Le0XgK2",
-            role = "standard",
-            first_name = "Sarah",
-            last_name = "Canard",
-        )
-        demo_user_4 = User(
-            username = "John", 
-            password_hash = "$2b$12$Ue2FU.RcQQvGQf61TwTGh.veFSngJPdIRQcqnvmDddHisTTYX9I9.",
-            role = "standard",
-            first_name = "John",
-            last_name = "Canard",
-        )
-        session.add(demo_user_1)
-        session.add(demo_user_2)
-        session.add(demo_user_3)
-        session.add(demo_user_4)
-        session.commit()
-        session.refresh(demo_user_4)
-        return {"ok": True}             
+@app.get('/auth', tags=['test'])
+def check_auth(
+    username: str = Depends(get_current_user),
+    ):
+    '''Says Hello to authentified users only
+    '''
+    return "Welcome {}!".format(username)
+
+
+@app.get('/auth/admin', tags=['test'])
+def check_admin(
+    username: str = Depends(get_current_user),
+    role: Role = Depends(get_role_admin),
+    ):
+    '''Says Hello to admin users only
+    '''
+    return "Welcome {}!".format(username)
+
+
+@app.get("/key", tags=['test'])
+async def check_apikey(
+    api_key_header: APIKey = Depends(get_api_key),
+    ):
+    '''Check API Key validity.
+    '''
+    return 'Hello this is secure ! '
+
+
+@app.post("/user/demo", tags=['test'])
+def create_demo_users(*, 
+    session: Session = Depends(get_session)
+    ):
+    '''Fill the `user` table of the database with 4 demo users (1 'admin' and 3 'standard').
+    '''
+    demo_user_1 = User(
+        username = "Neo", 
+        password_hash = pwd_context.hash('admin'),
+        role = "admin",
+        first_name = "Thomas",
+        last_name = "Anderson",
+    )
+    demo_user_2 = User(
+        username = "Arnold", 
+        password_hash = pwd_context.hash('hastalavista'),
+        role = "standard",
+        first_name = "T1000",
+        last_name = "Governator",
+    )
+    demo_user_3 = User(
+        username = "Sarah", 
+        password_hash = pwd_context.hash('sarahpwd'),
+        role = "standard",
+        first_name = "Sarah",
+        last_name = "Canard",
+    )
+    demo_user_4 = User(
+        username = "John", 
+        password_hash = pwd_context.hash('johnpwd'),
+        role = "standard",
+        first_name = "John",
+        last_name = "Canard",
+    )
+    session.add(demo_user_1)
+    session.add(demo_user_2)
+    session.add(demo_user_3)
+    session.add(demo_user_4)
+    session.commit()
+    session.refresh(demo_user_4)
+    return {"ok": True}             
 
 
 @app.get('/test/coffee', tags=['test'], name='Need some coffee?')
-def get_custom_exception(*, session: Session = Depends(get_session)):
-    '''Purposely triggers error 418 to check if API is functional
+def get_custom_exception(*, 
+    session: Session = Depends(get_session)
+    ):
+    '''Purposely triggers error 418 to check if API is functional.
     '''
     raise MyException(
       name="coffee error",
