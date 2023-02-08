@@ -51,7 +51,7 @@ MBTPy
 2. Pull the image from DockerHub :
 
 ```bash
-docker pull toinoublanc/mbtpy-api:1.1.0
+docker pull toinoublanc/mbtpy-api
 ```
 
 > Alternatively, if you want to build the image locally, go in the `/api/` directory and run
@@ -60,7 +60,7 @@ docker pull toinoublanc/mbtpy-api:1.1.0
 3. Run the following commands
 
 ```bash
-docker run toinoublanc/mbtpy-api:1.1.0 -p 8000:8000 
+docker run toinoublanc/mbtpy-api -p 8000:8000 
 ```
 
 4. The API will be serving at http://localhost:8000
